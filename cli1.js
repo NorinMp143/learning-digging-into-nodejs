@@ -10,11 +10,28 @@ var args = require("minimist")(process.argv.slice(2),{
   boolean: ['help'],
   string: ['file']
 });
-console.log(args); // { _:[], hello:'world', c:9}
+// console.log(args); // { _:[], hello:'world', c:9}
 
-// printHelp();
+if(args.help){
+  printHelp();
+}
+else if(args.file){
+  console.log(args.file);
+}
+else{
+  error('Incorrect usage',true)
+}
 
 // **************
+
+function error(msg, includeHelp= false){
+  console.log(msg);
+  if(includeHelp){
+    console.log('');
+    printHelp();
+  }
+}
+
 function printHelp(){
   console.log("cli usage:");
   console.log("  cli --help");
