@@ -6,6 +6,9 @@
 // console.log(process.argv); // ['/usr/...','/use/...','--hello=world -c9']
 // console.log(process.argv.slice(2)); // ['--hello=world -c9']
 
+const path = require('path');
+const fs = require('fs');
+
 var args = require("minimist")(process.argv.slice(2),{
   boolean: ['help'],
   string: ['file']
@@ -16,13 +19,22 @@ if(args.help){
   printHelp();
 }
 else if(args.file){
-  console.log(args.file);
+  const filepath = path.resolve(args.file);
+  processFile(filepath);
+  // console.log(filepath);
 }
 else{
   error('Incorrect usage',true)
 }
 
 // **************
+
+function processFile (filepath){
+  // const contents = fs.readFileSync(filepath) // buffer
+  // process.stdout.write(contents) // real string data
+  const contents = fs.readFileSync(filepath, 'utf8'); 
+  console.log(contents);
+}
 
 function error(msg, includeHelp= false){
   console.log(msg);
