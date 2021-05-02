@@ -34,8 +34,9 @@ function error(msg, includeHelp= false){
 
 function printHelp(){
   console.log("cli usage:");
-  console.log("  cli --help");
+  console.log("  cli1.js --file={FILENAME}");
   console.log("");
   console.log(" --help          print this help");
+  console.log(" --file          process the file")
   console.log("");
 }
