@@ -1,0 +1,12 @@
+{
+  "name": "digging-into-nodejs",
+  "version": "1.0.0",
+  "description": "learning",
+  "main": "index.js",
+  "repository": "https://github.com/NorinMp143/learning-digging-into-nodejs.git",
+  "author": "Madan Lal <madanparmar637@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "minimist": "^1.2.5"
+  }
+}
