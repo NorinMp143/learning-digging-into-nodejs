@@ -30,10 +30,13 @@ else{
 // **************
 
 function processFile (filepath){
-  // const contents = fs.readFileSync(filepath) // buffer
-  // process.stdout.write(contents) // real string data
-  const contents = fs.readFileSync(filepath, 'utf8'); 
-  console.log(contents);
+  fs.readFile(filepath, (err, contents)=>{
+    if(err){
+      error(err.toString());
+    }else{
+      process.stdout.write(contents);
+    }
+  })
 }
 
 function error(msg, includeHelp= false){
