@@ -6,11 +6,15 @@
 // console.log(process.argv); // ['/usr/...','/use/...','--hello=world -c9']
 // console.log(process.argv.slice(2)); // ['--hello=world -c9']
 
-const path = require('path');
-const fs = require('fs');
+import util from 'util';
+import path from 'path';
+import fs from 'fs';
 
-var args = require("minimist")(process.argv.slice(2),{
-  boolean: ['help'],
+import getStdin from 'get-stdin';
+import minimist from 'minimist';
+
+var args = minimist(process.argv.slice(2),{
+  boolean: ['help', 'in'],
   string: ['file']
 });
 // console.log(args); // { _:[], hello:'world', c:9}
@@ -18,10 +22,17 @@ var args = require("minimist")(process.argv.slice(2),{
 if(args.help){
   printHelp();
 }
+else if(args.in || args._.includes('-')){
+  getStdin().then(processFile).catch(error);
+}
 else if(args.file){
-  const filepath = path.resolve(args.file);
-  processFile(filepath);
-  // console.log(filepath);
+  fs.readFile(path.resolve(args.file), (err, contents)=>{
+    if(err){
+      error(err.toString());
+    }else{
+      processFile(contents.toString());
+    }
+  })
 }
 else{
   error('Incorrect usage',true)
@@ -29,15 +40,9 @@ else{
 
 // **************
 
-function processFile (filepath){
-  fs.readFile(filepath, (err, contents)=>{
-    if(err){
-      error(err.toString());
-    }else{
-      contents = contents.toString().toUpperCase();
-      process.stdout.write(contents);
-    }
-  })
+function processFile (contents){
+  contents = contents.toUpperCase();
+  console.log(contents);
 }
 
 function error(msg, includeHelp= false){
@@ -53,6 +58,7 @@ function printHelp(){
   console.log("  cli1.js --file={FILENAME}");
   console.log("");
   console.log(" --help          print this help");
-  console.log(" --file          process the file")
+  console.log(" --file          process the file");
+  console.log(" --in, -         process stdin");
   console.log("");
 }

@@ -6,7 +6,9 @@
   "repository": "https://github.com/NorinMp143/learning-digging-into-nodejs.git",
   "author": "Madan Lal <madanparmar637@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
+    "get-stdin": "^9.0.0",
     "minimist": "^1.2.5"
   }
 }
