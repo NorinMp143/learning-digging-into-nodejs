@@ -9,6 +9,7 @@
   "type": "module",
   "dependencies": {
     "get-stdin": "^9.0.0",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "stream": "^0.0.2"
   }
 }

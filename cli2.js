@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 
 import minimist from 'minimist';
+import { Transform } from 'stream';
 
 const __dirname = path.resolve();
 
@@ -34,7 +35,14 @@ else{
 // **************
 
 function processFile (inStream){
-  const outStream = inStream;
+  let outStream = inStream;
+  const upperStream = new Transform({
+    transform(chunk, enc, cb){
+      this.push(chunk.toString().toUpperCase());
+      cb();
+    }
+  });
+  outStream = outStream.pipe(upperStream);
   const targetStream = process.stdout;
   outStream.pipe(targetStream);
 }
