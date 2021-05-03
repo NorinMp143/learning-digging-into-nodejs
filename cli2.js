@@ -70,5 +70,6 @@ function printHelp(){
   console.log(" --help          print this help");
   console.log(" --file          process the file");
   console.log(" --in, -         process stdin");
+  console.log(" --out           print the output");
   console.log("");
 }
