@@ -12,11 +12,13 @@ import { Transform } from 'stream';
 const __dirname = path.resolve();
 
 var args = minimist(process.argv.slice(2),{
-  boolean: ['help', 'in'],
+  boolean: ['help', 'in', 'out'],
   string: ['file']
 });
 
 var BASH_PATH = path.resolve( process.env.BASE_PATH || __dirname)
+
+var OUTFILE = path.join(BASH_PATH, 'out.txt');
 
 if(args.help){
   printHelp();
@@ -43,7 +45,13 @@ function processFile (inStream){
     }
   });
   outStream = outStream.pipe(upperStream);
-  const targetStream = process.stdout;
+  let targetStream;
+  if(args.out){
+    targetStream = process.stdout;
+  }
+  else{
+     targetStream = fs.createWriteStream(OUTFILE);
+  }
   outStream.pipe(targetStream);
 }
 
