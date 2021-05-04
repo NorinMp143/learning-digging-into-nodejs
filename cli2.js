@@ -13,7 +13,7 @@ import { Transform } from 'stream';
 const __dirname = path.resolve();
 
 var args = minimist(process.argv.slice(2),{
-  boolean: ['help', 'in', 'out', 'compress'],
+  boolean: ['help', 'in', 'out', 'compress', 'uncompress'],
   string: ['file']
 });
 
@@ -39,6 +39,12 @@ else{
 
 function processFile (inStream){
   let outStream = inStream;
+
+  if(args.uncompress){
+    const gunzipStream = zlib.createGunzip();
+    outStream = outStream.pipe(gunzipStream);
+  }
+
   const upperStream = new Transform({
     transform(chunk, enc, cb){
       this.push(chunk.toString().toUpperCase());
@@ -78,5 +84,6 @@ function printHelp(){
   console.log(" --in, -         process stdin");
   console.log(" --out           print the output");
   console.log(" --compress      gzip the output");
+  console.log(" --uncompress    un-zip the input");
   console.log("");
 }
