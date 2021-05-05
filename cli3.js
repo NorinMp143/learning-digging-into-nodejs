@@ -2,20 +2,21 @@
 
 "use strict";
 
-import util from 'util';
-import path from 'path';
-import fs from 'fs';
-import zlib from 'zlib';
+const util = require('util');
+const path = require('path');
+const fs = require('fs');
+const zlib = require('zlib');
 
-import minimist from 'minimist';
-import { Transform } from 'stream';
-
-const __dirname = path.resolve();
+const minimist = require('minimist');
+const { Transform } = require('stream');
+const CAF = require('caf');
 
 var args = minimist(process.argv.slice(2),{
   boolean: ['help', 'in', 'out', 'compress', 'uncompress'],
   string: ['file']
 });
+
+processFile = CAF(processFile);
 
 function streamComplete(stream){
   return new Promise (function c(res){
@@ -31,12 +32,14 @@ if(args.help){
   printHelp();
 }
 else if(args.in || args._.includes('-')){
-  processFile(process.stdin)
+  const timeoutToken = CAF.timeout(3, "Timeout!");
+  processFile(timeoutToken,process.stdin)
   .catch(error);
 }
 else if(args.file){
   const stream = fs.createReadStream(path.join(BASH_PATH,args.file));
-  processFile(stream)
+  const timeoutToken = CAF.timeout(3, "Timeout!");
+  processFile(timeoutToken,stream)
   .then((data)=>{
     console.log('Complete!');
   })
@@ -48,7 +51,7 @@ else{
 
 // **************
 
-async function processFile (inStream){
+function *processFile (signal,inStream){
   let outStream = inStream;
 
   if(args.uncompress){
@@ -76,7 +79,11 @@ async function processFile (inStream){
      targetStream = fs.createWriteStream(OUTFILE);
   }
   outStream.pipe(targetStream);
-  await streamComplete(outStream)
+  signal.pr.catch(function f(){
+    outStream.unpipe(targetStream);
+    outStream.destroy();
+  })
+  yield streamComplete(outStream)
 }
 
 function error(msg, includeHelp= false){
