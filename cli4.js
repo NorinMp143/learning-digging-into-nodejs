@@ -7,14 +7,62 @@ const path = require('path');
 const fs = require('fs');
 const zlib = require('zlib');
 
+
 const minimist = require('minimist');
 const { Transform } = require('stream');
 const CAF = require('caf');
+var sqlite3 = require('sqlite3');
+
+// ******************************
+
+const DB_PATH  = path.join(__dirname, 'my.db');
+const DB_SQL_PATH = path.join(__dirname, 'mydb.sql');
 
 var args = minimist(process.argv.slice(2),{
   boolean: ['help', 'in', 'out', 'compress', 'uncompress'],
   string: ['file']
 });
+
+// ******************************
+
+var SQL3;
+
+async function main(){
+  if(!args.other){
+    error("Missing '--other=..'");
+    return;
+  }
+
+  // define some SQLite3 database helpers
+  var myDB = new sqlite3.Database(DB_PATH);
+  SQL3 = {
+    run(...args){
+      return new Promise(function c(resolve, reject){
+        myDB.run(...args, function onResult(err){
+          if(err){
+            reject(err);
+          }else{
+            resolve(this);
+          }
+        })
+      })
+    },
+    get: util.promisify(myDB.get.bind(myDB)),
+    all: util.promisify(myDB.all.bind(myDB)),
+    exec: util.promisify(myDB.exec.bind(myDB))
+  };
+
+  var initSQL = fs.readFileSync(DB_SQL_PATH, "utf-8");
+  // initialize the database structure
+  await SQL3.exec(initSQL);
+  var other = args.other;
+  var something = Math.trunc(Math.random()*1E9);
+
+  // insert values and print all records
+
+
+  // error('Oops');
+}
 
 processFile = CAF(processFile);
 
@@ -32,13 +80,13 @@ if(args.help){
   printHelp();
 }
 else if(args.in || args._.includes('-')){
-  const timeoutToken = CAF.timeout(13, "Timeout!");
+  const timeoutToken = CAF.timeout(3, "Timeout!");
   processFile(timeoutToken,process.stdin)
   .catch(error);
 }
 else if(args.file){
   const stream = fs.createReadStream(path.join(BASH_PATH,args.file));
-  const timeoutToken = CAF.timeout(13, "Timeout!");
+  const timeoutToken = CAF.timeout(3, "Timeout!");
   processFile(timeoutToken,stream)
   .then((data)=>{
     console.log('Complete!');
