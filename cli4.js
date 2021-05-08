@@ -59,9 +59,45 @@ async function main(){
   var something = Math.trunc(Math.random()*1E9);
 
   // insert values and print all records
+  const otherId = await insertOrLookupOther(other);
+  if(otherId){
+    let result = await insertSomething(otherId, something);
+    if(result){
+      return;
+    }
+  }
+  error('Oops');
+}
 
-
-  // error('Oops');
+async function insertOrLookupOther(other){
+  const result = await SQL3.get(
+    `
+      SELECT
+        id
+      FROM
+        Other
+      WHERE
+        data = ?
+    `,
+    other
+  );
+  if(result && result.id){
+    return result.id;
+  }
+  else{
+    result = await SQL3.run(
+      `
+        INSERT INTO
+          Other (data)
+        VALUES
+          (?)
+      `,
+      other
+    );
+    if(result && result.lastID){
+      return result.lastID;
+    }
+  }
 }
 
 processFile = CAF(processFile);

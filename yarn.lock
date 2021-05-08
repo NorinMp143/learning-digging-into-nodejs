@@ -94,10 +94,10 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
-caf@^12.0.1:
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/caf/-/caf-12.0.1.tgz#f7e92aa6bdad35e598dcd323e9cc23696b84e8ce"
-  integrity sha512-6zyBeMsHJM795cLiRr7PHJAuVaPKgswWeUzxMLyAiiB0RfQy22RLsUbZqQz5injTGoYQVhYA5nMgN9JhSBiT8Q==
+caf@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/caf/-/caf-13.0.0.tgz#e29fa3aa7847fcc4633114aaf59e05c358377daf"
+  integrity sha512-n7Ed73JDtYrXc5TTm0QTjXxUpOuRIotg3mp1L1EHvlVE/x6Kpdcxiw44HXk/rFgtigLWunpTuSO3Oq10Jr6lJA==
 
 caseless@~0.12.0:
   version "0.12.0"

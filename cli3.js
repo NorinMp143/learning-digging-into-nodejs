@@ -32,13 +32,13 @@ if(args.help){
   printHelp();
 }
 else if(args.in || args._.includes('-')){
-  const timeoutToken = CAF.timeout(13, "Timeout!");
+  const timeoutToken = CAF.timeout(23, "Timeout!");
   processFile(timeoutToken,process.stdin)
   .catch(error);
 }
 else if(args.file){
   const stream = fs.createReadStream(path.join(BASH_PATH,args.file));
-  const timeoutToken = CAF.timeout(13, "Timeout!");
+  const timeoutToken = CAF.timeout(23, "Timeout!");
   processFile(timeoutToken,stream)
   .then((data)=>{
     console.log('Complete!');
