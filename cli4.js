@@ -60,11 +60,33 @@ async function main(){
   if(otherId){
     let result = await insertSomething(otherId, something);
     if(result){
-      console.log('success');
-      return;
+      //success
+      var records = await getAllRecords();
+      if(records && records.length >0){
+        console.table(records);
+        return;
+      }
     }
   }
   error('Oops');
+}
+
+async function getAllRecords(){
+  let result = await SQL3.all(
+    `
+      SELECT
+        Other.data as 'other',
+        Something.data as 'something'
+      FROM
+        Something JOIN Other
+        ON (Something.otherId = Other.id)
+      ORDER BY
+        Other.id DESC, Something.data ASC
+    `
+  );
+  if(result && result.length > 0){
+    return result;
+  }
 }
 
 async function insertSomething(otherId, something){
