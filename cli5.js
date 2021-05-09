@@ -75,32 +75,19 @@ var delay = util.promisify(setTimeout);
     console.log(`listening on http://localhost:${HTTP_PORT}...`);
   }
 
-  function handleRequest(req,res){
-    fileServer.serve(req,res);
+  async function handleRequest(req,res){
+    if(req.url=='/get-records'){
+      let records = await getAllRecords();
+      res.writeHead(200,{
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
+      });
+      res.end(JSON.stringify(records));
+    }else{
+      fileServer.serve(req,res);
+    }
   }
 
-
-  // var initSQL = fs.readFileSync(DB_SQL_PATH, "utf-8");
-  // // initialize the database structure
-  // await SQL3.exec(initSQL);
-  // var other = args.other;
-  // var something = Math.trunc(Math.random()*1E9);
-
-//   // insert values and print all records
-//   const otherId = await insertOrLookupOther(other);
-//   if(otherId){
-//     let result = await insertSomething(otherId, something);
-//     if(result){
-//       //success
-//       var records = await getAllRecords();
-//       if(records && records.length >0){
-//         console.table(records);
-//         return;
-//       }
-//     }
-//   }
-//   error('Oops');
-// }
 
 async function getAllRecords(){
   let result = await SQL3.all(
@@ -120,57 +107,4 @@ async function getAllRecords(){
   }
 }
 
-async function insertSomething(otherId, something){
-  const result = await SQL3.run(
-    `
-      INSERT INTO
-        Something (otherId, data)
-      VALUES
-        (?,?)
-    `,
-    otherId, something
-  );
-  if(result && result.changes > 0){
-    return true;
-  }
-  return false;
-}
 
-async function insertOrLookupOther(other){
-  let result = await SQL3.get(
-    `
-      SELECT
-        id
-      FROM
-        Other
-      WHERE
-        data = ?
-    `,
-    other
-  );
-  if(result && result.id){
-    return result.id;
-  }
-  else{
-    result = await SQL3.run(
-      `
-        INSERT INTO
-          Other (data)
-        VALUES
-          (?)
-      `,
-      other
-    );
-    if(result && result.lastID){
-      return result.lastID;
-    }
-  }
-}
-
-function error(msg, includeHelp= false){
-  console.log(msg);
-  if(includeHelp){
-    console.log('');
-    printHelp();
-  }
-}
