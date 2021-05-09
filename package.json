@@ -10,6 +10,7 @@
     "caf": "^13.0.0",
     "get-stdin": "^9.0.0",
     "minimist": "^1.2.5",
+    "node-static-alias": "^1.1.2",
     "sqlite3": "^5.0.2",
     "stream": "^0.0.2"
   }
