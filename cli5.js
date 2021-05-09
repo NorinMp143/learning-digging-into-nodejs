@@ -37,6 +37,33 @@ var delay = util.promisify(setTimeout);
     exec: util.promisify(myDB.exec.bind(myDB))
   };
 
+  var fileServer = new staticAlias.Server(WEB_PATH,{
+    cache: 100,
+    serverInfo: "Node Practice: ex5",
+    alias: [
+      {
+        match: /^\/(?:index\/?)?(?:[?#].*$)?$/,
+        serve: 'index.html',
+        force: true
+      },
+      {
+        match: /^\/js\/.+$/,
+        serve: '<% absPath %>',
+        force: true
+      },
+      {
+        match: /^\/(?:[\w\d]+)(?:[\/?#].*$)?$/,
+        serve: function onMatch(params) {
+          return `${params.basename}.html`;
+        },
+      },
+      {
+        match: /[^]/,
+        serve: "404.html",
+      },
+    ]
+  })
+
   var httpserv = http.createServer(handleRequest);
 
   main();
@@ -49,14 +76,7 @@ var delay = util.promisify(setTimeout);
   }
 
   function handleRequest(req,res){
-    if(req.url == '/hello'){
-      res.writeHead(200,{'Content-Type':'text/plain'});
-      res.end('Hello World');
-    }
-    else{
-      res.writeHead(404);
-      res.end();
-    }
+    fileServer.serve(req,res);
   }
 
 
